@@ -1,3 +1,6 @@
+import re
+
+
 class TextNode():
     def __init__(self, text, text_type, url=None):
         self.text = text
@@ -30,3 +33,18 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 new_list.extend([oldnode])
     return new_list
     
+
+def extract_markdown_images(text):
+    return re.findall(r"!\[(.*?)\]\((.*?)\)", text)
+
+
+def extract_markdown_links(text):
+    return re.findall(r"\[(.*?)\]\((.*?)\)", text)
+
+def split_nodes_image(old_nodes):
+    pass
+
+
+
+def split_nodes_links(old_nodes):
+    pass

@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode, split_nodes_delimiter
+from textnode import TextNode, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 
 class TestTextNode(unittest.TestCase):
@@ -64,8 +64,18 @@ class TestTextNode(unittest.TestCase):
         
     def test_split_nodes_markdown_syntax_error(self):
         node = TextNode('This is *wrong.', 'text')
-        print(split_nodes_delimiter([node], '*', 'italic'))
-        #self.assertEqual(split_nodes_delimiter([node], '*', 'italic'), Exception('Invalid markdown syntax. Use * twice'))
+        #print(split_nodes_delimiter([node], '*', 'italic'))
+        self.assertRaisesRegex(Exception, 'Invalid', split_nodes_delimiter, [node], '*', 'italic')
+
+    
+    def test_extract_md_img(self):
+        text = "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and ![another](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png)"
+        self.assertEqual(extract_markdown_images(text), [('image', 'https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png'), ('another', 'https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png')])
+
+    def test_extract_md_links(self):
+        text = "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"
+        self.assertEqual(extract_markdown_links(text), [('link', 'https://www.example.com'), ('another', 'https://www.example.com/another')])
+
 
 if __name__ == "__main__":
     unittest.main()
