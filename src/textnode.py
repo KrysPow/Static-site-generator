@@ -41,10 +41,42 @@ def extract_markdown_images(text):
 def extract_markdown_links(text):
     return re.findall(r"\[(.*?)\]\((.*?)\)", text)
 
+
 def split_nodes_image(old_nodes):
-    pass
+    new_list = []
+    for node in old_nodes:
+        extracted_imgs = extract_markdown_images(node.text)
+        if extracted_imgs == []:
+            new_list.append(node)
+        else:
+            for (alt, url) in extracted_imgs:
+                [first_part, second_part] = node.text.split(f'![{alt}]({url})', 1)
+                if first_part != '':
+                    new_list.extend([TextNode(first_part, 'text'), TextNode(alt, 'image', url)])
+                else:
+                    new_list.append(TextNode(alt, 'image', url))
+                node = TextNode(second_part, 'text')
 
-
+            if second_part != '':
+                new_list.append(TextNode(second_part, 'text'))
+    return new_list
+            
 
 def split_nodes_links(old_nodes):
-    pass
+    new_list = []
+    for node in old_nodes:
+        extracted_links = extract_markdown_links(node.text)
+        if extracted_links == []:
+            new_list.append(node)
+        else:
+            for (alt, url) in extracted_links:
+                [first_part, second_part] = node.text.split(f'[{alt}]({url})', 1)
+                if first_part != '':
+                    new_list.extend([TextNode(first_part, 'text'), TextNode(alt, 'link', url)])
+                else:
+                    new_list.append(TextNode(alt, 'link', url))
+                node = TextNode(second_part, 'text')
+
+            if second_part != '':
+                new_list.append(TextNode(second_part, 'text'))
+    return new_list
