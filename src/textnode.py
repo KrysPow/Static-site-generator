@@ -80,3 +80,31 @@ def split_nodes_links(old_nodes):
             if second_part != '':
                 new_list.append(TextNode(second_part, 'text'))
     return new_list
+
+
+def text_to_textnodes(text):
+    node = TextNode(text, 'text')
+    return split_nodes_links(
+        split_nodes_image(
+            split_nodes_delimiter(
+                split_nodes_delimiter(
+                    split_nodes_delimiter([node], '`', 'code'), '**', 'bold'), '*', 'italic')))
+
+
+def markdown_to_blocks(markdown):
+    return list(map(lambda x: x.lstrip(' ').rstrip(' '), markdown.split('\n\n')))
+
+
+def block_to_block_type(markdown_block):
+    if re.search(r'^#{1,6} ', markdown_block):
+        return 'heading'
+    elif re.search(r'^`{3}.+`{3}$', markdown_block):
+        return 'code'
+    elif False not in list(map(lambda x:x.startswith('>'), markdown_block.split('\n'))):
+        return 'quote'
+    elif None not in list(map(lambda x:re.search(r'^[*-] ', x), markdown_block.split('\n'))):
+        return 'unordered_list'
+    elif False not in [markdown_block.split('\n')[i-1].startswith(f'{i}. ') for i in range(1, len(markdown_block.split('\n'))+1)]:
+        return 'ordered_list'
+    else:
+        return 'paragraph'
