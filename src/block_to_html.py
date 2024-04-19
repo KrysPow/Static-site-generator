@@ -33,4 +33,12 @@ def markdown_to_html_node(markdown):
     nodes = [block_to_html(block, block_to_block_type(block)) for block in blocks]
     return ParentNode(children=nodes, tag='div')
 
+
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        if re.search(r'^# ', block):
+            return block.lstrip('# ')
+    raise Exception('All pages need a single <h1>')
     
+
