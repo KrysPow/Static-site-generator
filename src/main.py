@@ -6,7 +6,7 @@ from block_to_html import markdown_to_html_node, extract_title
 def main():
     # textnode = TextNode('dummy text', 'bold', 'http://www.dummy-site.de')
     # print(textnode)
-    #copy_contents_from_to('static', 'public')
+    copy_contents_from_to('static', 'public')
     generate_pages_recursively('content', 'template.html', 'public')
 
 
